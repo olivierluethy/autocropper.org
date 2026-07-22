@@ -12,6 +12,48 @@ import { FAQ } from "@/components/faq";
 import { Section } from "@/components/section";
 import { ScrollTracker } from "@/components/scroll-tracker";
 import { TimeTracker } from "@/components/time-tracker";
+import { SITE_URL } from "@/lib/blog";
+
+/**
+ * Site-level structured data: what the site is, and what the tool is. Helps
+ * search engines understand the product page as an application rather than a
+ * generic marketing page.
+ */
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: "Autocropper",
+      description:
+        "Crop and resize one logo into a full icon set — every size from 16 to 512 px, entirely in your browser.",
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "Autocropper",
+      url: SITE_URL,
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: "Autocropper",
+      applicationCategory: "MultimediaApplication",
+      operatingSystem: "Any (web browser)",
+      url: SITE_URL,
+      description:
+        "Turn any logo into a perfect icon set. Auto-cropping, background removal and every size from 16 to 512 px, processed locally in the browser.",
+      featureList: [
+        "Logo-aware automatic cropping",
+        "Background removal",
+        "Icon sizes 16 to 512 px in one pass",
+        "Client-side processing — images are never uploaded",
+      ],
+    },
+  ],
+};
 
 export default function Home() {
   return (
@@ -19,6 +61,12 @@ export default function Home() {
       <SiteHeader />
       <ScrollTracker />
       <TimeTracker />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(siteJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <main id="hero-tool" className="flex-1">
         <Hero />
 
