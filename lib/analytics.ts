@@ -42,6 +42,7 @@ export type TrackEvent =
   // Site engagement
   | "section_view"
   | "nav_click"
+  | "mobile_menu_toggle"
   | "logo_click"
   | "footer_link_click"
   | "external_link_click"

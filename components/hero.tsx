@@ -57,42 +57,35 @@ export function Hero() {
       <div className="absolute inset-x-0 top-0 -z-10 h-[60vh] glow" aria-hidden />
       <div className="bg-grid absolute inset-0 -z-10 opacity-60" aria-hidden />
 
-      <div className="mx-auto max-w-6xl px-5 pt-10 pb-12 sm:pt-16 sm:pb-20">
+      {/* Tight top spacing on small screens keeps the upload zone inside the
+          first viewport — it's the thing people came to use. */}
+      <div className="mx-auto max-w-6xl px-5 pt-6 pb-10 sm:pt-14 sm:pb-20">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="mx-auto max-w-3xl text-center"
         >
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-bg-elev)] px-3 py-1 text-xs font-medium text-[var(--color-fg-muted)]">
+          {/* The eyebrow repeats the subhead; on mobile that costs a line the
+              upload zone needs more. */}
+          <div className="mb-5 hidden items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-bg-elev)] px-3 py-1 text-xs font-medium text-[var(--color-fg-muted)] sm:inline-flex">
             <Sparkles className="h-3.5 w-3.5 text-[var(--color-accent)]" />
             One upload replaces five tools
           </div>
-          <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
+          <h1 className="text-balance text-3xl font-semibold tracking-tight sm:text-6xl">
             Turn any logo into a perfect icon set.
             <span className="block text-[var(--color-fg-muted)]">In seconds.</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-xl text-pretty text-base text-[var(--color-fg-muted)] sm:text-lg">
+          <p className="mx-auto mt-3 max-w-xl text-pretty text-sm text-[var(--color-fg-muted)] sm:mt-5 sm:text-lg">
             One upload replaces 5 tools. No quality loss. No uploads. No friction.
           </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-[var(--color-fg-subtle)]">
-            <span className="inline-flex items-center gap-1.5">
-              <Zap className="h-3.5 w-3.5" /> ~5 s end-to-end
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-3.5 w-3.5" /> 100 % in-browser
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5" /> No signup
-            </span>
-          </div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          className="mx-auto mt-10 max-w-3xl"
+          className="mx-auto mt-6 max-w-3xl sm:mt-10"
         >
           <div
             className={[
@@ -126,6 +119,20 @@ export function Hero() {
                 />
               </div>
             )}
+          </div>
+
+          {/* Proof sits under the tool: the upload zone gets the first look,
+              the reassurance answers the question it raises. */}
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-[var(--color-fg-subtle)]">
+            <span className="inline-flex items-center gap-1.5">
+              <Zap className="h-3.5 w-3.5" /> ~5 s end-to-end
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <ShieldCheck className="h-3.5 w-3.5" /> 100 % in-browser
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5" /> No signup
+            </span>
           </div>
         </motion.div>
       </div>

@@ -125,7 +125,7 @@ export function UploadZone({ onFile, busy, compact }: Props) {
         drag
           ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)]"
           : "border-[var(--color-border-strong)] hover:border-[var(--color-fg-muted)]",
-        compact ? "p-6" : "p-10 sm:p-14",
+        compact ? "p-6" : "p-8 sm:p-14",
       ].join(" ")}
     >
       <input

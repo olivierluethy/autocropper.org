@@ -2,17 +2,10 @@
 
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
+import { MobileMenu } from "./mobile-menu";
+import { NAV_LINKS } from "@/lib/nav";
 import { track } from "@/lib/analytics";
 import Image from "next/image"
-
-const links = [
-  { href: "#how-it-works", label: "How it works" },
-  { href: "#compare", label: "Compare" },
-  { href: "#calculator", label: "Savings" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact" },
-];
 
 export function SiteHeader() {
   return (
@@ -38,7 +31,7 @@ export function SiteHeader() {
           aria-label="Primary"
           className="hidden items-center gap-7 text-sm text-[var(--color-fg-muted)] md:flex"
         >
-          {links.map((l) => (
+          {NAV_LINKS.map((l) => (
             <Link
               key={l.href}
               href={l.href}
@@ -66,10 +59,11 @@ export function SiteHeader() {
                 destination: "#hero-tool",
               })
             }
-            className="hidden rounded-full bg-[var(--color-fg)] px-3.5 py-1.5 text-sm font-medium text-[var(--color-bg)] transition-opacity hover:opacity-90 sm:inline-flex"
+            className="hidden rounded-full bg-[var(--color-fg)] px-3.5 py-1.5 text-sm font-medium text-[var(--color-bg)] transition-opacity hover:opacity-90 md:inline-flex"
           >
             Try free
           </a>
+          <MobileMenu />
         </div>
       </div>
     </header>
