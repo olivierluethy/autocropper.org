@@ -3,11 +3,25 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { getPost, listPosts, renderMarkdown } from "@/lib/blog";
+import {
+  canonicalUrl,
+  getAllPosts,
+  getPost,
+  renderMarkdown,
+  type Post,
+  SITE_URL,
+} from "@/lib/blog";
 import { TrackedLink } from "@/components/tracked-link";
+import { ScrollTracker } from "@/components/scroll-tracker";
+import { BlogPostAnalytics } from "@/components/blog-analytics";
 
+/**
+ * Every post gets a route, including `seoIndex: false` ones — a de-indexed
+ * post must still resolve so inbound links don't 404 and Google can crawl it
+ * to see the `noindex` tag.
+ */
 export function generateStaticParams() {
-  return listPosts().map((p) => ({ slug: p.slug }));
+  return getAllPosts().map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -18,15 +32,53 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) return {};
+  const url = canonicalUrl(post);
+  const images = post.coverImage ? [post.coverImage] : undefined;
   return {
     title: post.title,
     description: post.description,
+    alternates: { canonical: url },
+    // `follow` either way: de-indexed posts should still pass link equity.
+    robots: { index: post.seoIndex, follow: true },
     openGraph: {
       title: post.title,
       description: post.description,
       type: "article",
-      publishedTime: post.publishedAt,
+      url,
+      siteName: "Autocropper",
+      publishedTime: post.date,
+      modifiedTime: post.updated,
+      authors: [post.author],
+      tags: post.tags,
+      images,
     },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description,
+      images,
+    },
+  };
+}
+
+/** Article structured data. Only emitted for posts we actually want indexed. */
+function articleJsonLd(post: Post) {
+  const url = canonicalUrl(post);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date,
+    dateModified: post.updated,
+    author: { "@type": "Organization", name: post.author, url: SITE_URL },
+    publisher: {
+      "@type": "Organization",
+      name: "Autocropper",
+      url: SITE_URL,
+    },
+    ...(post.coverImage ? { image: [`${SITE_URL}${post.coverImage}`] } : {}),
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
   };
 }
 
@@ -44,6 +96,20 @@ export default async function BlogPostPage({
   return (
     <>
       <SiteHeader />
+      <ScrollTracker pageType="blog_post" />
+      <BlogPostAnalytics
+        slug={post.slug}
+        seoIndex={post.seoIndex}
+        tags={post.tags}
+      />
+      {post.seoIndex ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(articleJsonLd(post)).replace(/</g, "\\u003c"),
+          }}
+        />
+      ) : null}
       <main className="flex-1">
         <article className="mx-auto max-w-3xl px-5 pt-12 pb-24 sm:pt-20">
           <TrackedLink
@@ -57,8 +123,8 @@ export default async function BlogPostPage({
           </TrackedLink>
           <header className="mt-8">
             <div className="flex items-center gap-3 text-xs text-[var(--color-fg-subtle)]">
-              <time dateTime={post.publishedAt}>
-                {new Date(post.publishedAt).toLocaleDateString("en-US", {
+              <time dateTime={post.date}>
+                {new Date(post.date).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -87,8 +153,8 @@ export default async function BlogPostPage({
             </p>
             <TrackedLink
               href="/#hero-tool"
-              event="blog_cta_click"
-              params={{ slug, cta: "open_tool" }}
+              event="blog_cta_clicked"
+              params={{ slug, cta_label: "Open Autocropper" }}
               className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-fg)] px-4 py-2 text-sm font-medium text-[var(--color-bg)] hover:opacity-90"
             >
               Open Autocropper

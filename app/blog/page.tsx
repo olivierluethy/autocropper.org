@@ -2,20 +2,26 @@ import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { listPosts } from "@/lib/blog";
+import { listPosts, SITE_URL } from "@/lib/blog";
 import { TrackedLink } from "@/components/tracked-link";
+import { ScrollTracker } from "@/components/scroll-tracker";
+import { BlogIndexAnalytics } from "@/components/blog-analytics";
 
 export const metadata: Metadata = {
   title: "Blog",
   description:
     "Field notes on icons, image processing and the workflows that ship them — from the Autocropper team.",
+  alternates: { canonical: `${SITE_URL}/blog` },
 };
 
+/** Only `seoIndex: true` posts are listed — `listPosts()` filters them. */
 export default function BlogIndex() {
   const posts = listPosts();
   return (
     <>
       <SiteHeader />
+      <ScrollTracker pageType="blog_index" />
+      <BlogIndexAnalytics numPostsShown={posts.length} />
       <main className="flex-1">
         <section className="mx-auto max-w-3xl px-5 pt-16 pb-10 sm:pt-24">
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--color-accent)]">
@@ -44,8 +50,8 @@ export default function BlogIndex() {
                   className="group flex flex-col gap-2 px-6 py-6 transition-colors hover:bg-[var(--color-bg-soft)]"
                 >
                   <div className="flex items-center gap-3 text-xs text-[var(--color-fg-subtle)]">
-                    <time dateTime={p.publishedAt}>
-                      {new Date(p.publishedAt).toLocaleDateString("en-US", {
+                    <time dateTime={p.date}>
+                      {new Date(p.date).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "short",
                         day: "numeric",

@@ -1,8 +1,11 @@
 import type { MetadataRoute } from "next";
-import { listPosts } from "@/lib/blog";
+import { listPosts, SITE_URL } from "@/lib/blog";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://autocropper.org";
-
+/**
+ * Only `seoIndex: true` posts belong here — `listPosts()` already filters
+ * them out. De-indexed posts stay crawlable (see `app/robots.ts`) but must
+ * not be advertised in the sitemap.
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const routes: MetadataRoute.Sitemap = [
@@ -13,7 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   for (const post of listPosts()) {
     routes.push({
       url: `${SITE_URL}/blog/${post.slug}`,
-      lastModified: new Date(post.publishedAt),
+      lastModified: new Date(post.updated),
       changeFrequency: "monthly",
       priority: 0.6,
     });
