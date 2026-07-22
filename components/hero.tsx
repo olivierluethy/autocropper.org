@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, ShieldCheck, Zap } from "lucide-react";
-import { processLogo, type ProcessedResult } from "@/lib/logo-pipeline";
+import { processLogo, TARGET_SIZES, type ProcessedResult } from "@/lib/logo-pipeline";
 import { UploadZone } from "./upload-zone";
 import { ResultViewer } from "./result-viewer";
 import { track, useSectionView } from "@/lib/analytics";
@@ -18,9 +18,21 @@ export function Hero() {
   async function handleFile(file: File) {
     setError(null);
     setBusy(true);
+    // The pipeline always runs logo-aware cropping over the fixed preset
+    // ladder, so these properties are constant today — they exist so the
+    // funnel keeps working if the size selection ever becomes user-driven.
+    track("crop_started", {
+      num_target_sizes: TARGET_SIZES.length,
+      logo_mode: true,
+      source: "preset",
+    });
     try {
       const r = await processLogo(file);
       setResult(r);
+      track("crop_completed", {
+        duration_ms: Math.round(r.durationMs),
+        num_outputs: TARGET_SIZES.length,
+      });
       track("upload_success", {
         ms: Math.round(r.durationMs),
         w: r.originalWidth,
@@ -33,6 +45,7 @@ export function Hero() {
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Processing failed";
       setError(`Could not process this image. ${msg}`);
+      track("crop_failed", { error_type: msg.slice(0, 60) });
       track("upload_error", { reason: msg.slice(0, 60), stage: "processing" });
     } finally {
       setBusy(false);

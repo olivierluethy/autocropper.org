@@ -52,6 +52,15 @@ export function UploadZone({ onFile, busy, compact }: Props) {
         return;
       }
       setWarning(null);
+      // Canonical funnel event. The tool takes one image at a time, so
+      // `count` is always 1 — kept as a property so the shape survives if
+      // multi-file upload ever lands.
+      track("image_uploaded", {
+        count: 1,
+        total_bytes: file.size,
+        file_types: [file.type || "unknown"],
+        source,
+      });
       // …plus a per-source event so funnels per upload method are easy.
       if (source === "drop") track("upload_drop", { size_kb: Math.round(file.size / 1024) });
       else if (source === "picker") track("upload_click", { size_kb: Math.round(file.size / 1024) });

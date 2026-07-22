@@ -24,9 +24,10 @@ export function ExternalTrackedLink({
   return (
     <a
       href={href}
-      onClick={() =>
-        track("external_link_click", { url: href, label, location })
-      }
+      onClick={() => {
+        track("outbound_link_clicked", { href, label, location });
+        track("external_link_click", { url: href, label, location });
+      }}
       className={
         className ?? "text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]"
       }

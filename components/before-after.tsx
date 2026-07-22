@@ -48,7 +48,9 @@ export function BeforeAfter({ originalUrl, processedCanvas }: Props) {
   return (
     <div
       ref={wrap}
-      className="relative aspect-[16/9] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-soft)] select-none"
+      // Masked in session replay: this shows the user's own uploaded image.
+      data-ph-no-capture
+      className="ph-no-capture relative aspect-[16/9] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-soft)] select-none"
       onMouseMove={(e) => e.buttons === 1 && handleMove(e.clientX)}
       onTouchMove={(e) => handleMove(e.touches[0].clientX)}
       onClick={(e) => handleMove(e.clientX)}

@@ -46,9 +46,12 @@ export function CanvasView({
         : "checker";
 
   return (
+    // `ph-no-capture` keeps the user's own image out of PostHog session
+    // replays — the pipeline never uploads it, and neither should analytics.
     <div
+      data-ph-no-capture
       className={[
-        "flex items-center justify-center overflow-hidden rounded-xl border border-[var(--color-border)]",
+        "ph-no-capture flex items-center justify-center overflow-hidden rounded-xl border border-[var(--color-border)]",
         bgClass,
         className || "",
       ].join(" ")}

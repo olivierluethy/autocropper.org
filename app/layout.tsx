@@ -4,6 +4,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ThemeProvider, themeBootScript } from "@/components/theme-provider";
+import { PostHogProvider } from "@/components/posthog-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -76,6 +77,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-[var(--color-bg)] text-[var(--color-fg)]">
         <ThemeProvider>{children}</ThemeProvider>
+        <PostHogProvider />
         {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
         <Analytics />
       </body>

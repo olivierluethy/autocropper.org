@@ -79,12 +79,19 @@ export function ResultViewer({ result, onReset }: Props) {
     a.download = `autocropper-${size}x${size}.png`;
     a.click();
     URL.revokeObjectURL(url);
+    track("download_clicked", { format: "png", mode: "single", num_files: 1, size });
     track("download_click", { size, source });
   }
 
   async function downloadZip() {
     if (busyZip) return;
     const t0 = performance.now();
+    track("download_clicked", {
+      format: "zip",
+      mode: "zip",
+      // Every preset size plus the full-resolution source PNG.
+      num_files: TARGET_SIZES.length + 1,
+    });
     track("zip_download_click", {
       count: TARGET_SIZES.length,
       sizes: TARGET_SIZES.join(","),
