@@ -37,7 +37,12 @@ export async function generateMetadata({
   return {
     title: post.title,
     description: post.description,
-    alternates: { canonical: url },
+    // `alternates` from the root layout is replaced, not merged, so the feed
+    // link has to be repeated here.
+    alternates: {
+      canonical: url,
+      types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
+    },
     // `follow` either way: de-indexed posts should still pass link equity.
     robots: { index: post.seoIndex, follow: true },
     openGraph: {

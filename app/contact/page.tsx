@@ -7,6 +7,10 @@ export const metadata: Metadata = {
   title: "Contact",
   description:
     "Get in touch with the Autocropper team — questions, feedback, partnerships or anything you need from us.",
+  alternates: {
+    canonical: "/contact",
+    types: { "application/rss+xml": "/feed.xml" },
+  },
 };
 
 export default function ContactPage() {

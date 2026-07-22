@@ -5,6 +5,9 @@ const escapeXml = (s: string) =>
     ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" })[c]!,
   );
 
+// Posts are read from disk at build time, so the feed is fully static.
+export const dynamic = "force-static";
+
 /**
  * RSS feed. Mirrors the sitemap rule: `seoIndex: true` posts only, newest
  * first — `listPosts()` handles both.

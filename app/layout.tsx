@@ -53,6 +53,12 @@ export const metadata: Metadata = {
     description: "One upload replaces 5 tools. Pixel-perfect icons, in your browser.",
   },
   robots: { index: true, follow: true },
+  alternates: {
+    // Safe to inherit: every other route defines its own `alternates`, which
+    // replaces this block wholesale rather than merging with it.
+    canonical: "/",
+    types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
+  },
 };
 
 export const viewport: Viewport = {

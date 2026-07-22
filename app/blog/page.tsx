@@ -11,7 +11,12 @@ export const metadata: Metadata = {
   title: "Blog",
   description:
     "Field notes on icons, image processing and the workflows that ship them — from the Autocropper team.",
-  alternates: { canonical: `${SITE_URL}/blog` },
+  // `alternates` from the root layout is replaced, not merged, so the feed
+  // link has to be repeated here.
+  alternates: {
+    canonical: `${SITE_URL}/blog`,
+    types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
+  },
 };
 
 /** Only `seoIndex: true` posts are listed — `listPosts()` filters them. */
