@@ -18,9 +18,12 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 Requires Node.js >= 20.9 (Next.js 16).
 
+Run the test suite with `npm test` (vitest).
+
 ## Environment variables
 
-All optional — each integration no-ops when its variable is absent.
+Copy `.env.example` to `.env.local`. All optional — each integration no-ops
+when its variable is absent.
 
 | Variable | Purpose |
 | --- | --- |

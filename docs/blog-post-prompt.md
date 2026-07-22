@@ -47,6 +47,16 @@ Set in each post's frontmatter. It is the single switch controlling search visib
 
 **Never add a `noindex` post to `robots.txt` `Disallow`.** Google has to crawl a page to see its `noindex` tag; blocking it freezes the page in the index instead of removing it.
 
+Tag archives (`/blog/tag/<tag>`) are `noindex, follow` and stay out of the sitemap on purpose — they're navigation, and indexing near-duplicate listing pages dilutes the crawl budget concentrated by de-indexing the weak posts.
+
+`lib/blog.test.ts` pins this contract. Run `npm test` after touching `lib/blog.ts`, the sitemap or the feed.
+
+## Social cards
+
+Every page gets a generated 1200×630 card from `app/opengraph-image.tsx`; posts get their title rendered by `app/blog/[slug]/opengraph-image.tsx`. Both are prerendered — an image route in a dynamic segment needs its own `generateStaticParams`, and the `twitter-image.tsx` re-export must forward it too, or the route falls back to rendering on demand.
+
+Setting `coverImage` in frontmatter overrides the generated card for that post.
+
 ## Publishing cadence
 
 One to two genuinely useful posts a week, each owning one long-tail query. Publish as `seoIndex: true`; if a post has no impressions in Search Console after 6–8 weeks, flip it to `false` and fold its angle into a stronger post.

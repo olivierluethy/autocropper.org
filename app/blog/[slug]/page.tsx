@@ -7,10 +7,12 @@ import {
   canonicalUrl,
   getAllPosts,
   getPost,
+  relatedPosts,
   renderMarkdown,
   type Post,
   SITE_URL,
 } from "@/lib/blog";
+import { PostShare } from "@/components/post-share";
 import { TrackedLink } from "@/components/tracked-link";
 import { ScrollTracker } from "@/components/scroll-tracker";
 import { BlogPostAnalytics } from "@/components/blog-analytics";
@@ -33,7 +35,9 @@ export async function generateMetadata({
   const post = getPost(slug);
   if (!post) return {};
   const url = canonicalUrl(post);
-  const images = post.coverImage ? [post.coverImage] : undefined;
+  // Only set `images` when the post declares a cover — passing the key with
+  // `undefined` would suppress the generated opengraph-image/twitter-image.
+  const images = post.coverImage ? { images: [post.coverImage] } : {};
   return {
     title: post.title,
     description: post.description,
@@ -55,22 +59,41 @@ export async function generateMetadata({
       modifiedTime: post.updated,
       authors: [post.author],
       tags: post.tags,
-      images,
+      ...images,
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
-      images,
+      ...images,
     },
   };
 }
 
-/** Article structured data. Only emitted for posts we actually want indexed. */
+/**
+ * Article + breadcrumb structured data. Only emitted for posts we actually
+ * want indexed — a noindex page has no use for rich results.
+ */
 function articleJsonLd(post: Post) {
   const url = canonicalUrl(post);
   return {
     "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` },
+          { "@type": "ListItem", position: 3, name: post.title, item: url },
+        ],
+      },
+      articleNode(post, url),
+    ],
+  };
+}
+
+function articleNode(post: Post, url: string) {
+  return {
     "@type": "Article",
     headline: post.title,
     description: post.description,
@@ -97,6 +120,7 @@ export default async function BlogPostPage({
   if (!post) notFound();
 
   const html = renderMarkdown(post.body);
+  const related = relatedPosts(post);
 
   return (
     <>
@@ -137,6 +161,21 @@ export default async function BlogPostPage({
               </time>
               <span aria-hidden>·</span>
               <span>{post.readingMinutes} min read</span>
+              {post.updated !== post.date ? (
+                <>
+                  <span aria-hidden>·</span>
+                  <span>
+                    Updated{" "}
+                    <time dateTime={post.updated}>
+                      {new Date(post.updated).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </time>
+                  </span>
+                </>
+              ) : null}
             </div>
             <h1 className="mt-3 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
               {post.title}
@@ -144,6 +183,22 @@ export default async function BlogPostPage({
             <p className="mt-4 text-pretty text-lg text-[var(--color-fg-muted)]">
               {post.description}
             </p>
+            {post.tags.length ? (
+              <ul className="mt-5 flex flex-wrap gap-2">
+                {post.tags.map((t) => (
+                  <li key={t}>
+                    <TrackedLink
+                      href={`/blog/tag/${t}`}
+                      event="internal_link_clicked"
+                      params={{ slug, href: `/blog/tag/${t}` }}
+                      className="inline-flex rounded-full border border-[var(--color-border)] px-3 py-1 text-xs text-[var(--color-fg-muted)] transition-colors hover:border-[var(--color-fg-muted)] hover:text-[var(--color-fg)]"
+                    >
+                      {t}
+                    </TrackedLink>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </header>
           <div
             className="prose-content mt-10"
@@ -165,6 +220,35 @@ export default async function BlogPostPage({
               Open Autocropper
             </TrackedLink>
           </div>
+
+          <PostShare slug={post.slug} title={post.title} url={canonicalUrl(post)} />
+
+          {related.length ? (
+            <section className="mt-16 border-t border-[var(--color-border)] pt-10">
+              <h2 className="text-sm font-medium uppercase tracking-[0.18em] text-[var(--color-fg-subtle)]">
+                Keep reading
+              </h2>
+              <ul className="mt-5 space-y-4">
+                {related.map((r) => (
+                  <li key={r.slug}>
+                    <TrackedLink
+                      href={`/blog/${r.slug}`}
+                      event="internal_link_clicked"
+                      params={{ slug, href: `/blog/${r.slug}`, location: "related" }}
+                      className="group block"
+                    >
+                      <span className="font-medium tracking-tight transition-colors group-hover:text-[var(--color-accent)]">
+                        {r.title}
+                      </span>
+                      <span className="mt-1 block text-sm text-[var(--color-fg-muted)]">
+                        {r.description}
+                      </span>
+                    </TrackedLink>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
         </article>
       </main>
       <SiteFooter />

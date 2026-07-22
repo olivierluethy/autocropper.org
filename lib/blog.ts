@@ -123,6 +123,38 @@ export function getPost(slug: string): Post | undefined {
   return POSTS.find((p) => p.slug === slug);
 }
 
+/** Every tag used by an indexed post, with how many posts carry it. */
+export function listTags(): { tag: string; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const p of listPosts()) {
+    for (const t of p.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+}
+
+/** Indexed posts carrying a tag, newest first. */
+export function getPostsByTag(tag: string): Post[] {
+  return listPosts().filter((p) => p.tags.includes(tag));
+}
+
+/**
+ * Indexed posts sharing the most tags with `post`, newest first as the
+ * tie-breaker. Powers the related-posts block; de-indexed posts are never
+ * suggested, so we don't funnel readers into content we've told Google to
+ * ignore.
+ */
+export function relatedPosts(post: Post, limit = 3): Post[] {
+  return listPosts()
+    .filter((p) => p.slug !== post.slug)
+    .map((p) => ({ p, shared: p.tags.filter((t) => post.tags.includes(t)).length }))
+    .filter((x) => x.shared > 0)
+    .sort((a, b) => b.shared - a.shared || (a.p.date < b.p.date ? 1 : -1))
+    .slice(0, limit)
+    .map((x) => x.p);
+}
+
 export function postUrl(post: Post): string {
   return `${SITE_URL}/blog/${post.slug}`;
 }

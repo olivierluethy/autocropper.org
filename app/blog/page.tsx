@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { listPosts, SITE_URL } from "@/lib/blog";
+import { listPosts, listTags, SITE_URL } from "@/lib/blog";
 import { TrackedLink } from "@/components/tracked-link";
 import { ScrollTracker } from "@/components/scroll-tracker";
 import { BlogIndexAnalytics } from "@/components/blog-analytics";
@@ -22,6 +22,7 @@ export const metadata: Metadata = {
 /** Only `seoIndex: true` posts are listed — `listPosts()` filters them. */
 export default function BlogIndex() {
   const posts = listPosts();
+  const tags = listTags();
   return (
     <>
       <SiteHeader />
@@ -39,6 +40,23 @@ export default function BlogIndex() {
             Practical writing on image processing, build pipelines and the
             small details that separate a polished icon from a fuzzy one.
           </p>
+          {tags.length ? (
+            <ul className="mt-8 flex flex-wrap gap-2">
+              {tags.map(({ tag, count }) => (
+                <li key={tag}>
+                  <TrackedLink
+                    href={`/blog/tag/${tag}`}
+                    event="internal_link_clicked"
+                    params={{ href: `/blog/tag/${tag}`, location: "blog_index" }}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] px-3 py-1 text-xs text-[var(--color-fg-muted)] transition-colors hover:border-[var(--color-fg-muted)] hover:text-[var(--color-fg)]"
+                  >
+                    {tag}
+                    <span className="text-[var(--color-fg-subtle)] tabular-nums">{count}</span>
+                  </TrackedLink>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </section>
         <section className="mx-auto max-w-3xl px-5 pb-24">
           <ul className="divide-y divide-[var(--color-border)] rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elev)]">
