@@ -4,7 +4,7 @@ slug: "pwa-icon-sizes"
 description: "A PWA needs manifest icons at 192 and 512 px, plus a maskable one. Here's what each is for, the manifest.json setup, and how to make them from your logo."
 date: "2026-07-22"
 readTime: "7 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # PWA Icon Sizes and the Web App Manifest (192 & 512)

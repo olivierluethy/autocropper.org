@@ -4,7 +4,7 @@ slug: "chrome-extension-icon-sizes"
 description: "Chrome extensions need icons at 16, 32, 48, and 128 px. Here's what each is for, the manifest.json setup, and how to make all four from your logo in one drag."
 date: "2026-07-22"
 readTime: "6 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # Logo to Chrome Extension Icons (16, 32, 48, 128)

@@ -4,7 +4,7 @@ slug: "apple-touch-icon-size"
 description: "The Apple touch icon is 180×180 px. Here's what it's for, why it should be opaque, and how to make one from your logo in seconds — no upload, no blurry edges."
 date: "2026-07-21"
 readTime: "5 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # Apple Touch Icon: What Size It Is and How to Make One
