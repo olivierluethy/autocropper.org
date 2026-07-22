@@ -4,7 +4,7 @@ slug: "resize-images-without-uploading"
 description: "Resize logos and images without uploading them anywhere — entirely in your browser, verifiable in the network tab. Here's how local, on-device processing works."
 date: "2026-07-23"
 readTime: "6 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # How to Resize Images Without Uploading Them to a Server
