@@ -31,6 +31,8 @@ Two things worth knowing:
 
 **The apple-touch-icon has no transparency.** iOS composites it on a background — usually black — so a transparent PNG gets an unintended dark backdrop. Give this one a solid background colour.
 
+The markup, the manifest entries and the maskable-icon safe zone are covered in detail in [favicon in every size you need](/blog/favicon-all-sizes).
+
 ## Mobile apps: one master, not a folder of exports
 
 This is where old guides waste the most of your time. Historically you shipped dozens of pre-scaled icon files per platform. That's no longer how it works.

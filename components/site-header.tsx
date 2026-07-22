@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { ImageIcon } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { track } from "@/lib/analytics";
 import Image from "next/image"

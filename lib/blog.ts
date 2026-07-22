@@ -136,6 +136,15 @@ export function canonicalUrl(post: Post): string {
 /* Rendering                                                           */
 /* ------------------------------------------------------------------ */
 
+/** Escapes text that bypasses marked's own escaping (fenced code blocks). */
+function escapeHtml(s: string): string {
+  return s.replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!,
+  );
+}
+
 /**
  * Tailwind classes are baked into the rendered HTML rather than living in a
  * stylesheet, so post markup stays consistent with the rest of the site and
@@ -170,6 +179,11 @@ const marked = new Marked({
     },
     strong({ tokens }: Tokens.Strong) {
       return `<strong class="font-semibold text-[var(--color-fg)]">${this.parser.parseInline(tokens)}</strong>`;
+    },
+    code({ text, lang }: Tokens.Code) {
+      return `<pre class="mt-6 overflow-x-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-soft)] p-4 text-sm leading-6"${
+        lang ? ` data-lang="${escapeHtml(lang)}"` : ""
+      }><code class="font-mono text-[var(--color-fg-muted)]">${escapeHtml(text)}</code></pre>\n`;
     },
     codespan({ text }: Tokens.Codespan) {
       return `<code class="rounded bg-[var(--color-bg-soft)] px-1 py-0.5 text-[0.85em]">${text}</code>`;
