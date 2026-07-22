@@ -16,6 +16,26 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+Requires Node.js >= 20.9 (Next.js 16).
+
+## Environment variables
+
+All optional — each integration no-ops when its variable is absent.
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Absolute site origin, used for canonicals, sitemap and RSS. Defaults to `https://autocropper.org`. |
+| `NEXT_PUBLIC_GA_ID` | GA4 measurement ID. |
+| `NEXT_PUBLIC_POSTHOG_KEY` | PostHog project API key. Without it PostHog never initialises. |
+| `NEXT_PUBLIC_POSTHOG_HOST` | PostHog ingestion host, e.g. `https://eu.i.posthog.com`. |
+
+## Blog
+
+Posts are markdown files in `content/blog/`, read at build time by `lib/blog.ts`.
+The `seoIndex` frontmatter flag is the single switch for search visibility — see
+[`docs/blog-post-prompt.md`](docs/blog-post-prompt.md) for the schema, the
+indexing rules and the prompt used to draft new posts.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

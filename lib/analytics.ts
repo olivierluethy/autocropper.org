@@ -1,8 +1,11 @@
 /**
  * Autocropper analytics layer.
  *
- * Thin wrapper around the GA4 `gtag` global that's injected by
- * `<GoogleAnalytics />` from `@next/third-parties/google`.
+ * `track()` fans one call out to every configured destination:
+ *   - GA4, via the `gtag` global injected by `<GoogleAnalytics />`.
+ *   - PostHog, via a sink registered by `<PostHogProvider />` (see
+ *     `components/posthog-provider.tsx`). The sink indirection keeps
+ *     `posthog-js` out of this module so it stays importable from anywhere.
  *
  * Designed as a typed event taxonomy so dashboards stay tidy:
  *   - All event names are snake_case GA4 conventions.
@@ -15,8 +18,8 @@
  *     (or `upload_error`) → `download_click` / `zip_download_click` →
  *     `zip_download_complete` → `tool_reset`.
  *
- * Safe to call when GA isn't configured (no `NEXT_PUBLIC_GA_ID`); the
- * underlying `gtag` is just absent and `track()` no-ops.
+ * Safe to call when neither destination is configured (no `NEXT_PUBLIC_GA_ID`,
+ * no `NEXT_PUBLIC_POSTHOG_KEY`); `track()` then simply no-ops.
  */
 
 type Gtag = (
@@ -47,6 +50,13 @@ export type TrackEvent =
   | "scroll_depth"
   | "time_milestone"
 
+  // Crop funnel (canonical names — mapped onto the real pipeline handlers)
+  | "image_uploaded"
+  | "crop_started"
+  | "crop_completed"
+  | "crop_failed"
+  | "download_clicked"
+
   // Tool funnel
   | "upload_attempt"
   | "upload_click" // file picker opened
@@ -76,20 +86,35 @@ export type TrackEvent =
   | "blog_post_click"
   | "blog_back_click"
   | "blog_cta_click"
-  | "blog_share_click";
+  | "blog_share_click"
+  | "blog_index_viewed"
+  | "blog_post_viewed"
+  | "blog_cta_clicked"
+  | "internal_link_clicked"
+  | "outbound_link_clicked";
 
 export type TrackParams = Record<
   string,
-  string | number | boolean | undefined | null
+  string | number | boolean | string[] | undefined | null
 >;
 
-/** Send an event to GA4. No-op if `gtag` isn't present. */
+type Sink = (event: TrackEvent, params: Record<string, unknown>) => void;
+
+let sink: Sink | null = null;
+
+/**
+ * Registered once by `<PostHogProvider />` after `posthog.init()`. Kept as a
+ * callback so this module never imports `posthog-js` directly.
+ */
+export function registerSink(fn: Sink) {
+  sink = fn;
+}
+
+/** Send an event to every configured destination. No-op if none are present. */
 export function track(event: TrackEvent, params?: TrackParams) {
   if (typeof window === "undefined") return;
-  const fn = window.gtag;
-  if (typeof fn !== "function") return;
   // Strip undefined / null so the GA debugger view is clean.
-  const clean: Record<string, string | number | boolean> = {};
+  const clean: Record<string, string | number | boolean | string[]> = {};
   if (params) {
     for (const k in params) {
       const v = params[k];
@@ -97,7 +122,17 @@ export function track(event: TrackEvent, params?: TrackParams) {
       clean[k] = v;
     }
   }
-  fn("event", event, clean);
+  const gtag = window.gtag;
+  if (typeof gtag === "function") {
+    // GA4 can't store arrays; join them so the param still reports.
+    const ga: Record<string, string | number | boolean> = {};
+    for (const k in clean) {
+      const v = clean[k];
+      ga[k] = Array.isArray(v) ? v.join(",") : v;
+    }
+    gtag("event", event, ga);
+  }
+  sink?.(event, clean);
 }
 
 /* ------------------------------------------------------------------ */
