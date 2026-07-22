@@ -34,6 +34,10 @@ when its variable is absent.
 
 ## Blog
 
+[`docs/product-brief.md`](docs/product-brief.md) is the context document for writing
+about the product — what the tool does, what it deliberately doesn't, the claims that
+are off-limits, and the search clusters worth targeting.
+
 Posts are markdown files in `content/blog/`, read at build time by `lib/blog.ts`.
 The `seoIndex` frontmatter flag is the single switch for search visibility — see
 [`docs/blog-post-prompt.md`](docs/blog-post-prompt.md) for the schema, the

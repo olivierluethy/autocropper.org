@@ -1,5 +1,8 @@
 # Reusable prompt: generate a new blog post
 
+Read [`product-brief.md`](product-brief.md) first — it's the source of truth for what
+the tool does, its limitations, and the claims that must never appear in a post.
+
 Fill the two placeholders and run in Claude Code from the repo root.
 
 ```
