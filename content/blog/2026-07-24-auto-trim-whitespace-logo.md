@@ -4,7 +4,7 @@ slug: "auto-trim-whitespace-logo"
 description: "Trimming whitespace around a logo by hand is fiddly and risks cropping off part of the mark. Here's how to auto-trim it to the content precisely, keeping every part."
 date: "2026-07-24"
 readTime: "5 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # How to Auto-Trim the Whitespace Around a Logo

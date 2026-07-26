@@ -4,7 +4,7 @@ slug: "transparent-background-icon-from-logo"
 description: "Turn a logo on a white or coloured background into a clean transparent-background icon — background removed, edges de-haloed, centred on a square. Here's how, no upload."
 date: "2026-07-27"
 readTime: "6 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # How to Make a Transparent-Background Icon From a Logo

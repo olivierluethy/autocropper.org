@@ -4,7 +4,7 @@ slug: "online-image-tools-privacy"
 description: "Every online image tool uploads your file to a server. For a client logo or unreleased asset, that's a real problem. Here's what uploading exposes, and the alternative."
 date: "2026-07-26"
 readTime: "6 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # The Privacy Problem With Online Image Tools (And the Local Alternative)

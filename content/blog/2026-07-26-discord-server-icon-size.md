@@ -4,7 +4,7 @@ slug: "discord-server-icon-size"
 description: "A Discord server icon is 512×512, square, and cropped to a circle. Here's how to make one from your logo in one drag — centered, clean-edged, and the right size."
 date: "2026-07-26"
 readTime: "5 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # Make a Discord Server Icon From Your Logo (512×512)

@@ -4,7 +4,7 @@ slug: "nextjs-favicon-from-logo"
 description: "Next.js has a clean file convention for favicons: drop your icons into the app directory and it generates the tags. Here's the full setup, from your logo to shipped."
 date: "2026-07-25"
 readTime: "6 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # Add a Favicon to a Next.js Site From Your Logo

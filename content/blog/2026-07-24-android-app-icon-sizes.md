@@ -4,7 +4,7 @@ slug: "android-app-icon-sizes"
 description: "Android app icons need an adaptive icon (foreground + background), legacy mipmaps from 48 to 192 px, and a 512 Play Store icon. Here's the full set and how to prep it."
 date: "2026-07-24"
 readTime: "7 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # Logo to Android App Icon: Adaptive Icon & mipmap Sizes

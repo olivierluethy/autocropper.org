@@ -4,7 +4,7 @@ slug: "favicon-ico-vs-png"
 description: "favicon.ico or PNG? In 2026, PNG favicons are sharper and enough for modern browsers, with an optional .ico at the root as a fallback. Here's when each one matters."
 date: "2026-07-25"
 readTime: "6 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # favicon.ico vs PNG Favicon: Which to Use in 2026

@@ -4,7 +4,7 @@ slug: "github-org-repo-icon"
 description: "A GitHub org avatar should be a square PNG, at least 500px. For a repo README logo, use a transparent PNG so it works in dark mode. Here's how to make both from your logo."
 date: "2026-07-27"
 readTime: "5 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # GitHub Organization & Repo Icon: Make One From Your Logo
