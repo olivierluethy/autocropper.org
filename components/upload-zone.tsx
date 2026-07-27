@@ -4,8 +4,16 @@ import { useCallback, useRef, useState } from "react";
 import { ImageDown, Upload } from "lucide-react";
 import { track } from "@/lib/analytics";
 
-const MAX_BYTES = 10 * 1024 * 1024;
-const ACCEPTED = ["image/png", "image/jpeg", "image/webp", "image/bmp", "image/gif"];
+// Phone photos (HEIC/high-res PNG) routinely exceed 10 MB, so the old cap was a
+// common dead-end. The pipeline downscales the working resolution defensively,
+// so we can accept much larger files and still stay memory-safe.
+const MAX_BYTES = 40 * 1024 * 1024;
+
+// Permissive `accept`: `image/*` plus explicit extensions the OS pickers don't
+// always map to a MIME type (HEIC, TIFF, SVG, …), so valid files aren't greyed
+// out on iOS/Android. Real format detection happens downstream via magic bytes.
+const ACCEPT_ATTR =
+  "image/*,.heic,.heif,.tif,.tiff,.avif,.svg,.psd,.ico,.bmp,.jxl";
 
 interface Props {
   onFile: (file: File) => void;
@@ -21,14 +29,16 @@ export function UploadZone({ onFile, busy, compact }: Props) {
   const [warning, setWarning] = useState<string | null>(null);
 
   const validate = useCallback((file: File): string | null => {
-    if (file.type === "image/svg+xml" || /\.svg$/i.test(file.name)) {
-      return "SVG isn't supported — please upload a raster image (PNG, JPG, WebP).";
-    }
-    if (!ACCEPTED.includes(file.type) && !/\.(png|jpe?g|webp|bmp|gif)$/i.test(file.name)) {
-      return "Unsupported file type. Use PNG, JPG, WebP, BMP or GIF.";
-    }
+    // Format is no longer gated here: the decode pipeline sniffs the real format
+    // from magic bytes and returns a specific, actionable message if it truly
+    // can't read the file. That keeps us from dead-ending obvious images (a HEIC
+    // with a .jpg name, an SVG, a mislabelled export). Only size is enforced up
+    // front, since it's the one thing we can cheaply check without decoding.
     if (file.size > MAX_BYTES) {
-      return "Image is larger than 10 MB. Try a smaller file for best results.";
+      return "This image is over 40 MB. Try exporting a smaller version.";
+    }
+    if (file.size === 0) {
+      return "That file is empty. Try re-exporting it.";
     }
     return null;
   }, []);
@@ -132,7 +142,7 @@ export function UploadZone({ onFile, busy, compact }: Props) {
         ref={inputRef}
         type="file"
         className="sr-only"
-        accept="image/png,image/jpeg,image/webp,image/bmp,image/gif"
+        accept={ACCEPT_ATTR}
         onChange={onPick}
         aria-hidden="true"
       />
@@ -148,10 +158,11 @@ export function UploadZone({ onFile, busy, compact }: Props) {
         </div>
         <div>
           <p className={compact ? "text-base font-semibold" : "text-xl sm:text-2xl font-semibold tracking-tight"}>
-            {drag ? "Drop it" : "Drop your logo here"}
+            {drag ? "Drop it" : "Add your logo"}
           </p>
           <p className="mt-1.5 text-sm text-[var(--color-fg-muted)]">
-            or <span className="underline underline-offset-2">click to upload</span> · PNG, JPG, WebP up to 10 MB
+            <span className="underline underline-offset-2">Tap to upload</span>
+            <span className="hidden sm:inline"> or drop a file</span> · PNG, JPG, SVG, HEIC &amp; more
           </p>
         </div>
         <p className="text-xs text-[var(--color-fg-subtle)]">

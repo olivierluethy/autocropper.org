@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated quality-harness artifacts (regenerate via npm run test:quality / contact-sheet)
+/tests/quality/results.json
+/tests/quality/contact-sheet.html

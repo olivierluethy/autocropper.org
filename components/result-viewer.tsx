@@ -140,7 +140,7 @@ export function ResultViewer({ result, onReset }: Props) {
             Your icon set is ready
           </h3>
         </div>
-        <div className="flex items-center gap-3 text-sm text-[var(--color-fg-muted)]">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-fg-muted)]">
           <span>
             Processed in{" "}
             <span className="text-[var(--color-fg)] font-semibold tabular-nums">
@@ -148,9 +148,18 @@ export function ResultViewer({ result, onReset }: Props) {
             </span>
           </span>
           <span aria-hidden>·</span>
-          <span>
-            {result.originalWidth}×{result.originalHeight} → {result.bbox.w}×{result.bbox.h}
+          {/* "Understood as": confirms the file was read correctly, including its
+              detected format and true (pre-cap) source dimensions. */}
+          <span className="uppercase tracking-wide">{result.format}</span>
+          <span aria-hidden>·</span>
+          <span className="tabular-nums">
+            {result.sourceWidth}×{result.sourceHeight} → {result.bbox.w}×{result.bbox.h}
           </span>
+          {result.note ? (
+            <span className="rounded-full bg-[var(--color-accent-soft)] px-2 py-0.5 text-xs text-[var(--color-accent)]">
+              {result.note}
+            </span>
+          ) : null}
         </div>
       </div>
 
@@ -218,20 +227,21 @@ export function ResultViewer({ result, onReset }: Props) {
               key={s}
               type="button"
               onClick={() => downloadOne(s, "size_bar")}
-              className="rounded-md border border-[var(--color-border)] px-2.5 py-1 text-xs font-medium tabular-nums hover:border-[var(--color-fg-muted)]"
+              // ≥44px tap target on touch; compact on desktop.
+              className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-[var(--color-border)] px-3 text-sm font-medium tabular-nums hover:border-[var(--color-fg-muted)] sm:min-h-0 sm:min-w-0 sm:rounded-md sm:px-2.5 sm:py-1 sm:text-xs"
             >
               {s}px
             </button>
           ))}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           <button
             type="button"
             onClick={() => {
               track("tool_reset", { had_result: true });
               onReset();
             }}
-            className="inline-flex items-center gap-1.5 rounded-md border border-[var(--color-border)] px-3 py-2 text-sm font-medium hover:border-[var(--color-fg-muted)]"
+            className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-lg border border-[var(--color-border)] px-3 text-sm font-medium hover:border-[var(--color-fg-muted)] sm:w-auto sm:min-h-0 sm:rounded-md sm:py-2"
           >
             <RefreshCw className="h-4 w-4" />
             New logo
@@ -240,12 +250,30 @@ export function ResultViewer({ result, onReset }: Props) {
             type="button"
             onClick={downloadZip}
             disabled={busyZip}
-            className="inline-flex items-center gap-1.5 rounded-md bg-[var(--color-fg)] px-3 py-2 text-sm font-medium text-[var(--color-bg)] hover:opacity-90 disabled:opacity-50"
+            className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-lg bg-[var(--color-fg)] px-3 text-sm font-medium text-[var(--color-bg)] hover:opacity-90 disabled:opacity-50 sm:w-auto sm:min-h-0 sm:rounded-md sm:py-2"
           >
             <Package className="h-4 w-4" />
             {busyZip ? "Zipping…" : "Download all (ZIP)"}
           </button>
         </div>
+      </div>
+
+      {/* Mobile sticky download bar: keeps the primary action reachable while
+          scrolling the results. Pins to the viewport bottom while the result is
+          on screen, then releases. */}
+      <div
+        className="sticky bottom-0 z-20 -mx-2 mt-2 border-t border-[var(--color-border)] bg-[var(--color-bg-elev)]/95 px-2 pt-2 backdrop-blur sm:hidden"
+        style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}
+      >
+        <button
+          type="button"
+          onClick={downloadZip}
+          disabled={busyZip}
+          className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-fg)] px-4 text-base font-semibold text-[var(--color-bg)] hover:opacity-90 disabled:opacity-50"
+        >
+          <Package className="h-5 w-5" />
+          {busyZip ? "Zipping…" : "Download all (ZIP)"}
+        </button>
       </div>
 
       {usage.over ? (

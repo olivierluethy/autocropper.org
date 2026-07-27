@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, ShieldCheck, Zap } from "lucide-react";
 import { processLogo, TARGET_SIZES, type ProcessedResult } from "@/lib/logo-pipeline";
@@ -13,7 +13,16 @@ export function Hero() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ProcessedResult | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
   useSectionView(sectionRef, "hero");
+
+  // After processing, bring the result into view (mobile especially, where the
+  // upload zone and result don't both fit on screen). Honour reduced motion.
+  useEffect(() => {
+    if (!result) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    resultRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  }, [result]);
 
   async function handleFile(file: File) {
     setError(null);
@@ -43,8 +52,11 @@ export function Hero() {
         had_alpha: r.bg === null,
       });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Processing failed";
-      setError(`Could not process this image. ${msg}`);
+      // Decode/pipeline errors are already written as specific, user-facing
+      // guidance ("This looks like a PDF…", "No significant logo detected…"),
+      // so surface them directly rather than wrapping in a generic prefix.
+      const msg = e instanceof Error ? e.message : "Something went wrong. Try another image.";
+      setError(msg);
       track("crop_failed", { error_type: msg.slice(0, 60) });
       track("upload_error", { reason: msg.slice(0, 60), stage: "processing" });
     } finally {
@@ -54,7 +66,7 @@ export function Hero() {
 
   return (
     <section className="relative isolate" ref={sectionRef}>
-      <div className="absolute inset-x-0 top-0 -z-10 h-[60vh] glow" aria-hidden />
+      <div className="absolute inset-x-0 top-0 -z-10 h-[60dvh] glow" aria-hidden />
       <div className="bg-grid absolute inset-0 -z-10 opacity-60" aria-hidden />
 
       {/* Tight top spacing on small screens keeps the upload zone inside the
@@ -108,7 +120,7 @@ export function Hero() {
                 ) : null}
               </>
             ) : (
-              <div className="p-2 sm:p-3">
+              <div ref={resultRef} className="scroll-mt-20 p-2 sm:p-3">
                 <ResultViewer
                   key={result.originalUrl}
                   result={result}

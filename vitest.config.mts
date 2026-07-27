@@ -6,7 +6,7 @@ export default defineConfig({
     // Node environment: the suites cover build-time content loading and the
     // analytics fan-out, neither of which needs a DOM.
     environment: "node",
-    include: ["lib/**/*.test.ts"],
+    include: ["lib/**/*.test.ts", "tests/**/*.test.ts"],
   },
   resolve: {
     alias: { "@": path.resolve(__dirname) },

@@ -37,6 +37,8 @@ export function BeforeAfter({ originalUrl, processedCanvas }: Props) {
     }
   }
 
+  const dragging = useRef(false);
+
   function handleMove(clientX: number) {
     const node = wrap.current;
     if (!node) return;
@@ -50,10 +52,21 @@ export function BeforeAfter({ originalUrl, processedCanvas }: Props) {
       ref={wrap}
       // Masked in session replay: this shows the user's own uploaded image.
       data-ph-no-capture
-      className="ph-no-capture relative aspect-[16/9] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-soft)] select-none"
-      onMouseMove={(e) => e.buttons === 1 && handleMove(e.clientX)}
-      onTouchMove={(e) => handleMove(e.touches[0].clientX)}
-      onClick={(e) => handleMove(e.clientX)}
+      // `touch-action: none` + pointer capture: dragging the handle moves the
+      // slider instead of scrolling the page, and works for touch/mouse/pen with
+      // one code path.
+      style={{ touchAction: "none" }}
+      className="ph-no-capture relative aspect-[16/9] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-soft)] select-none touch-none cursor-ew-resize"
+      onPointerDown={(e) => {
+        dragging.current = true;
+        e.currentTarget.setPointerCapture(e.pointerId);
+        handleMove(e.clientX);
+      }}
+      onPointerMove={(e) => {
+        if (dragging.current) handleMove(e.clientX);
+      }}
+      onPointerUp={() => { dragging.current = false; }}
+      onPointerCancel={() => { dragging.current = false; }}
       role="slider"
       aria-label="Before / after comparison"
       aria-valuemin={0}
@@ -92,7 +105,7 @@ export function BeforeAfter({ originalUrl, processedCanvas }: Props) {
         className="pointer-events-none absolute top-0 bottom-0 w-px bg-[var(--color-fg)]/70"
         style={{ left: `${pos}%` }}
       >
-        <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border-strong)] bg-[var(--color-bg-elev)] text-[var(--color-fg)] shadow-md text-xs font-medium">
+        <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full border border-[var(--color-border-strong)] bg-[var(--color-bg-elev)] text-[var(--color-fg)] shadow-md text-sm font-medium">
           ⇆
         </div>
       </div>
