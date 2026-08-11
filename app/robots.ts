@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://autocropper.org";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.autocropper.org";
 
 export default function robots(): MetadataRoute.Robots {
   return {

@@ -27,7 +27,7 @@ when its variable is absent.
 
 | Variable | Purpose |
 | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | Absolute site origin, used for canonicals, sitemap and RSS. Defaults to `https://autocropper.org`. |
+| `NEXT_PUBLIC_SITE_URL` | Absolute site origin, used for canonicals, sitemap and RSS. Defaults to `https://www.autocropper.org`. |
 | `NEXT_PUBLIC_GA_ID` | GA4 measurement ID. |
 | `NEXT_PUBLIC_POSTHOG_KEY` | PostHog project API key. Without it PostHog never initialises. |
 | `NEXT_PUBLIC_POSTHOG_HOST` | PostHog ingestion host, e.g. `https://eu.i.posthog.com`. |
