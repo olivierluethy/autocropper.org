@@ -23,7 +23,7 @@ import matter from "gray-matter";
 import { Marked, type Tokens } from "marked";
 
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://autocropper.org";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.autocropper.org";
 
 const CONTENT_DIR = path.join(process.cwd(), "content", "blog");
 
