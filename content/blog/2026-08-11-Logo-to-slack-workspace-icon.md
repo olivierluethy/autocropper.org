@@ -4,7 +4,7 @@ slug: "logo-to-slack-workspace-icon"
 description: "Turn your logo into a 512×512 Slack workspace icon in seconds — squares only, on-device, nothing uploaded. The exact size Slack wants, and how to make it."
 date: "2026-08-11"
 readTime: "4 min"
-seoIndex: "yes"
+seoIndex: true
 ---
 
 # Logo to Slack Workspace Icon: Make a 512×512 in One Drag
